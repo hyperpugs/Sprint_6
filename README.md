@@ -17,4 +17,8 @@
 
 #### Посмотреть отчёт в браузере:
 
+Запуск тестов с генерацией от allure
+> pytest -v --alluredir=allure_results  
+ 
+Просмотр тестов в браузере
 > allure serve allure_results
