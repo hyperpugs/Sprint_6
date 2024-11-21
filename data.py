@@ -1,4 +1,4 @@
-from locators.order_page_locator import MainPageLocators
+from locators.main_page_locator import MainPageLocators
 from locators.order_page_locator import OrderPageLocators
 
 

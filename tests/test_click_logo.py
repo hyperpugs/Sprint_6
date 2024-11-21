@@ -1,36 +1,21 @@
-from selenium.webdriver.firefox import webdriver
-from pages.order_page import *
-import pytest
-from locators.order_page_locator import *
+import allure
+from data import Urls
+from locators.main_page_locator import MainPageLocators
+from pages.main_page import MainPage
 
-class TestLandingAccordeon:
-    driver = None
 
-    @classmethod
-    def setup_class(cls):
-        cls.driver = webdriver.Firefox()
+class TestClickLogo:
 
-    @allure.title("Проверяем, что раскрываются все пункты в блоке вопросов и ответов")
-    @pytest.mark.parametrize("question, answer",
-                             [
-                                 [OrderPageLocators.accordeon_1, OrderPageLocators.accordeon_text_1],
-                                 [OrderPageLocators.accordeon_2, OrderPageLocators.accordeon_text_2],
-                                 [OrderPageLocators.accordeon_3, OrderPageLocators.accordeon_text_3],
-                                 [OrderPageLocators.accordeon_4, OrderPageLocators.accordeon_text_4],
-                                 [OrderPageLocators.accordeon_5, OrderPageLocators.accordeon_text_5],
-                                 [OrderPageLocators.accordeon_6, OrderPageLocators.accordeon_text_6],
-                                 [OrderPageLocators.accordeon_7, OrderPageLocators.accordeon_text_7],
-                                 [OrderPageLocators.accordeon_8, OrderPageLocators.accordeon_text_8]
-                             ])
-    def test_questions_and_answers_block(self, question, answer):
-        main = OrderPage(self.driver)
-        main.navigate(links.MAIN_URL)
-        main.scroll_to_accordeon()
-        main.wait_for_accordeon_in_view()
-        main.click_element(question)
-        result = main.wait_for_element_visible(answer)
-        assert result.is_displayed()
+    @allure.title('Проверка перехода на главную страницу "Самоката"')
+    def test_click_samokat_logo(self, driver):
+        main_page = MainPage(driver, timer=10)
+        main_page.open_page(Urls.ORDER_URL)
+        main_page.wait_and_click_element(MainPageLocators.SAMOKAT_LOGO)
+        assert main_page.driver.current_url == Urls.SCOOTER_URL, 'Не удалось перейти на главную страницу'
 
-    @classmethod
-    def teardown_class(cls):
-        cls.driver.quit()
+    @allure.title('Проверка перехода на главную страницу "Дзена"')
+    def test_click_yandex_logo(self, driver):
+        main_page = MainPage(driver, timer=10)
+        main_page.wait_and_click_element(MainPageLocators.YANDEX_LOGO)
+        main_page.switch_second_browser_window(MainPageLocators.FIND_BUTTON)
+        assert main_page.driver.current_url == Urls.DZEN_URL, 'Не удалось перейти на страницу Дзена'
