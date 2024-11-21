@@ -84,4 +84,4 @@ class TrackingPageLocators:
     scooter_logo = [By.XPATH, "//img[@alt='Scooter']"] #Лого "Самокат"
 
 class DzenLocators:
-    yandex_search_logo = [By.CSS_SELECTOR, ".dzen-layout--collapse-button__collapseButton-z1"]
+    yandex_search_logo = [By.XPATH, "//div[1]/a/svg[2]/use"]
