@@ -1,5 +1,3 @@
-
-import links
 from pages.order_confirm_page import OrderConfirmPage
 from pages.order_created_page import OrderCreatedPage
 from pages.order_page import *
@@ -7,7 +5,6 @@ from pages.tracking_page import *
 from pages.receiver_form_page import *
 from pages.rent_details_page import *
 from pages.dzen_page import *
-from locators import *
 
 
 class TestOrder:

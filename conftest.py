@@ -1,11 +1,14 @@
 import pytest
 from selenium import webdriver
+from data import Urls
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def driver():
-    driver = webdriver.Firefox()
+    firefox = webdriver.Firefox()
+    firefox.maximize_window()
+    firefox.get(Urls.SCOOTER_URL)
 
-    yield driver
+    yield firefox
 
-    driver.quit()
+    firefox.quit()

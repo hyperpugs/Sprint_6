@@ -1,5 +1,5 @@
 from selenium.webdriver.firefox import webdriver
-import links
+import data
 from conftest import *
 from pages.order_page import *
 import pytest

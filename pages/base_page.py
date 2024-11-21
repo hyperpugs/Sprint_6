@@ -1,50 +1,45 @@
-from selenium.webdriver.firefox.webdriver import WebDriver
+import allure
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium import webdriver
-from locators import *
-import allure
-from selenium.common import NoSuchElementException
+from locators.main_page_locator import MainPageLocators
+
 
 class BasePage:
-    class BasePage:
-        @allure.step("Инициализируем браузер")
-        def __init__(self, driver: WebDriver):
-            self.driver = driver
 
-        @allure.step("Открываем нужный URL")
-        def navigate(self, url):
-            self.driver.get(url)
+    def __init__(self, driver, timer):
+        self.driver = driver
+        self.timer = 10
 
-        @allure.step("Ищем нужный элемент")
-        def find_element(self, locator, timeout=30):
-            return WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(locator))
+    @allure.title('Ожидание загрузки и поиск элемента на странице')
+    def wait_and_find_element(self, locator):
+        WebDriverWait(self.driver, self.timer).until(EC.visibility_of_element_located(locator))
+        return self.driver.find_element(*locator)
 
-        @allure.step("Ищем нужные элементы")
-        def find_elements(self, locator, timeout=10):
-            return WebDriverWait(self.driver, timeout).until(EC.presence_of_all_elements_located(locator))
+    @allure.title('Ожидание загрузки и клик по элементу')
+    def wait_and_click_element(self, locator):
+        WebDriverWait(self.driver, self.timer).until(EC.element_to_be_clickable(locator))
+        self.driver.find_element(*locator).click()
 
-        @allure.step("Кликаем по нужному элементу")
-        def click_element(self, locator):
-            self.find_element(locator).click()
+    @allure.title('Открытие страницы по заданному адресу')
+    def open_page(self, url):
+        self.driver.get(url)
 
-        @allure.step("Заполняем поле нужным значением")
-        def enter_text(self, locator, text):
-            self.find_element(locator).send_keys(text)
+    @allure.title('Прокрутка до указанного элемента')
+    def scroll_to_element(self, element):
+        element = self.wait_and_find_element(element)
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
 
-        @allure.step("Ждём, пока элемент станет видимым")
-        def wait_for_element_visible(self, locator, timeout=30):
-            return WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
+    @allure.title('Ожидание загрузки и внесение данных')
+    def wait_and_send_keys(self, locator, text):
+        WebDriverWait(self.driver, self.timer).until(EC.visibility_of_element_located(locator))
+        self.driver.find_element(*locator).send_keys(text)
 
-        @allure.step("Переключаемся на открывшуюся вкладку")
-        def switch_tab(self):
-            tabs = self.driver.window_handles
-            self.driver.switch_to.window(tabs[1])
+    @allure.step('Принять куки')
+    def click_to_cookies(self):
+        cookie_button = self.driver.find_element(*MainPageLocators.COOKIE_BUTTON)
+        cookie_button.click()
 
-        @allure.step("Соглашаемся с куками, чтобы они не перекрывали элемент")
-        def cookie_close(self):
-            try:
-                close_button = self.find_element(ReceiverFormLocators.cookie_button)
-                close_button.click()
-            except NoSuchElementException:
-                pass
+    @allure.step('Переход на вторую вкладку браузера')
+    def switch_second_browser_window(self, locator):
+        self.driver.switch_to.window(self.driver.window_handles[1])
+        self.wait_and_find_element(locator)

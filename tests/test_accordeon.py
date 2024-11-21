@@ -1,8 +1,7 @@
 from selenium.webdriver.firefox import webdriver
-import links
 from pages.order_page import *
 import pytest
-from locators import *
+from locators.order_page_locator import *
 
 class TestLandingAccordeon:
     driver = None

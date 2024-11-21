@@ -1,36 +1,41 @@
-from pages.base_page import *
+import allure
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from data import Urls
+from locators.order_page_locator import OrderPageLocators
+from pages.base_page import BasePage
 
-#элементы страницы
+
 class OrderPage(BasePage):
-    #Форма "Для кого самокат"
-    @allure.step("Инициализируем браузер")
-    def __init__(self, driver):
-        super().__init__(driver)
 
-    @allure.step("Нажимаем на 'Заказать' на главной вверху страницы")
-    def go_to_order_top(self):
-        self.click_element(OrderPageLocators.top_order_button)
+    @allure.title('Выбор станции из выпадающего списка')
+    def click_to_dropdown(self, locator):
+        self.wait_and_click_element(OrderPageLocators.STATION_INPUT)
+        self.wait_and_click_element(locator)
 
-    @allure.step("Прокручиваем до кнопки 'Заказать' внизу страницы")
-    def scroll_to_bottom(self):
-        element = self.find_element(OrderPageLocators.bottom_order_button)
-        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+    @allure.title('Переход на страницу заказа')
+    def go_to_order(self, button):
+        self.scroll_to_element(button)
+        self.wait_and_find_element(button)
+        self.wait_and_click_element(button)
+        self.assert_url_change(Urls.SCOOTER_URL)
 
-    @allure.step("Нажимаем на 'Заказать' на главной вверху страницы")
-    def go_to_order_bottom(self):
-        self.click_element(OrderPageLocators.bottom_order_button)
+    @allure.title('Заполнение данных для оформления заказа')
+    def fill_order(self, params, station):
+        self.wait_and_send_keys(OrderPageLocators.NAME_INPUT, params[0])
+        self.wait_and_send_keys(OrderPageLocators.SURNAME_INPUT, params[1])
+        self.wait_and_send_keys(OrderPageLocators.ADDRESS_INPUT, params[2])
+        self.click_to_dropdown(station)
+        self.wait_and_send_keys(OrderPageLocators.PHONE_INPUT, params[3])
+        self.wait_and_click_element(OrderPageLocators.NEXT_BUTTON)
+        self.wait_and_click_element(OrderPageLocators.DELIVERY_DATE_INPUT)
+        self.wait_and_click_element(params[4])
+        self.wait_and_click_element(OrderPageLocators.RENTAL_TIME_INPUT)
+        self.wait_and_click_element(params[5])
+        self.wait_and_click_element(params[6])
+        self.wait_and_send_keys(OrderPageLocators.COMMENT_INPUT, params[7])
+        self.wait_and_click_element(OrderPageLocators.ORDER_BUTTON_COMPLETE)
 
-    @allure.step("Дожидаемся видимости кнопки 'Заказать' внизу страницы")
-    def wait_for_bottom_button_visible(self):
-        self.wait_for_element_visible(OrderPageLocators.bottom_order_button)
-
-    @allure.step("Прокручиваем до блока с вопросами и ответами")
-    def scroll_to_accordeon(self):
-        element = self.find_element(OrderPageLocators.accordeon_1)
-        self.driver.execute_script("arguments[0].scrollIntoView();", element)
-
-    @allure.step("Убеждаемся, что доскроллили до блока с вопросами и ответами")
-    def wait_for_accordeon_in_view(self):
-        self.wait_for_element_visible(OrderPageLocators.accordeon_1)
-
-
+    @allure.title('Ожидание смены адреса')
+    def assert_url_change(self, url):
+        WebDriverWait(self.driver, self.timer).until(EC.url_changes(url))
