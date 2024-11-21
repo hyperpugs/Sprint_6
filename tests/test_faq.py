@@ -1,38 +1,19 @@
-from selenium.webdriver.firefox import webdriver
-import data
-from conftest import *
-from pages.order_page import *
+import allure
 import pytest
+from data import QuestionData
+from pages.main_page import MainPage
+from locators.main_page_locator import MainPageLocators
 
 
-class TestLandingAccordeon:
-    driver = None
+class TestQuestion:
 
-    @classmethod
-    def setup_class(cls):
-        cls.driver = webdriver.Firefox()
+    @allure.title('Раздел "Вопросы о важном"')
+    @pytest.mark.parametrize(QuestionData.PARAM, QuestionData.VALUE)
+    def test_question(self, driver, number, expected_answer):
 
-    @allure.title("Проверяем, что раскрываются все пункты в блоке вопросов и ответов")
-    @pytest.mark.parametrize("question, answer",
-                             [
-                                 [OrderPageLocators.accordeon_1, OrderPageLocators.accordeon_text_1],
-                                 [OrderPageLocators.accordeon_2, OrderPageLocators.accordeon_text_2],
-                                 [OrderPageLocators.accordeon_3, OrderPageLocators.accordeon_text_3],
-                                 [OrderPageLocators.accordeon_4, OrderPageLocators.accordeon_text_4],
-                                 [OrderPageLocators.accordeon_5, OrderPageLocators.accordeon_text_5],
-                                 [OrderPageLocators.accordeon_6, OrderPageLocators.accordeon_text_6],
-                                 [OrderPageLocators.accordeon_7, OrderPageLocators.accordeon_text_7],
-                                 [OrderPageLocators.accordeon_8, OrderPageLocators.accordeon_text_8]
-                             ])
-    def test_questions_and_answers_block(self, question, answer):
-        main = OrderPage(self.driver)
-        main.navigate(links.MAIN_URL)
-        main.scroll_to_accordeon()
-        main.wait_for_accordeon_in_view()
-        main.click_element(question)
-        result = main.wait_for_element_visible(answer)
-        assert result.is_displayed()
+        main_page = MainPage(driver, timer=10)
+        main_page.scroll_to_last_question()
+        main_page.click_to_question(number)
+        answer = main_page.wait_and_find_element(MainPageLocators.get_question_answer(number))
 
-    @classmethod
-    def teardown_class(cls):
-        cls.driver.quit()
+        assert answer.text == expected_answer, 'Ответ на вопрос не совпадает с ожидаемым'
