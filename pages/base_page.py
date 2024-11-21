@@ -5,6 +5,7 @@ from selenium import webdriver
 from locators import *
 import allure
 from selenium.common import NoSuchElementException
+
 class BasePage:
     class BasePage:
         @allure.step("Инициализируем браузер")
