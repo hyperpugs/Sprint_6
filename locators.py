@@ -1,47 +1,107 @@
 from selenium.webdriver.common.by import By
 
+class OrderPageLocators():
+    top_order_button = [By.XPATH, "//button[@class='Button_Button__ra12g'][contains(.,'Заказать')]"]
 
-class BasePageLocator:
-    cookie_accept = [By.XPATH, ".//button[text()='да все привыкли']"]
-    logo_button = [By.XPATH, ".//img[@alt='Yandex']/parent::a"]
-    order_status_button = [By.XPATH, ".//button[text()='Статус заказа']"]
-    scooter_logo = (By.XPATH, ".//a[contains(@class, 'LogoScooter')]")
+    bottom_order_button = [By.XPATH, "//button[@class='Button_Button__ra12g Button_Middle__1CSJM'][contains(.,'Заказать')]"]
 
-class YandexHomePage:
-    top_order_button = [By.XPATH, ".//div[starts-with(@class, 'Header')]/button[text()='Заказать']"]
-    bottom_order_button = [By.XPATH, ".//div[starts-with(@class, 'Home')]/button[text()='Заказать']"]
-    FAQ_button = [By.XPATH, ".//div[@class='accordion__button']"]
-    FAQ_answers = [By.CSS_SELECTOR, ".accordion__panel > p"]
-    order_status_button = [By.XPATH, ".//button[text()='Статус заказа']"]
 
-    @staticmethod
-    def FAQ_question(question_number):
-        return [By.XPATH, f".//div[@class='accordion__button' and @id='accordion__heading-{question_number}']"]
+    # Раскрывашки в "Вопросах о важном"
+    accordeon_1 = [By.CSS_SELECTOR, "#accordion__heading-0"]
+    accordeon_2 = [By.CSS_SELECTOR, "#accordion__heading-1"]
+    accordeon_3 = [By.CSS_SELECTOR, "#accordion__heading-2"]
+    accordeon_4 = [By.CSS_SELECTOR, "#accordion__heading-3"]
+    accordeon_5 = [By.CSS_SELECTOR, "#accordion__heading-4"]
+    accordeon_6 = [By.CSS_SELECTOR, "#accordion__heading-5"]
+    accordeon_7 = [By.CSS_SELECTOR, "#accordion__heading-6"]
+    accordeon_8 = [By.CSS_SELECTOR, "#accordion__heading-7"]
 
-    @staticmethod
-    def FAQ_answer(answer_number):
-        return [By.XPATH, f".//div[@class='accordion__panel' and @id='accordion__panel-{answer_number}']/p"]
+    # Текст под раскрывашкой
+    accordeon_text_1 = [By.CSS_SELECTOR, "#accordion__panel-0 > p:nth-child(1)"]
+    accordeon_text_2 = [By.CSS_SELECTOR, "#accordion__panel-1 > p:nth-child(1)"]
+    accordeon_text_3 = [By.CSS_SELECTOR, "#accordion__panel-2 > p:nth-child(1)"]
+    accordeon_text_4 = [By.CSS_SELECTOR, "#accordion__panel-3 > p:nth-child(1)"]
+    accordeon_text_5 = [By.CSS_SELECTOR, "#accordion__panel-4 > p:nth-child(1)"]
+    accordeon_text_6 = [By.CSS_SELECTOR, "#accordion__panel-5 > p:nth-child(1)"]
+    accordeon_text_7 = [By.CSS_SELECTOR, "#accordion__panel-6 > p:nth-child(1)"]
+    accordeon_text_8 = [By.CSS_SELECTOR, "#accordion__panel-7 > p:nth-child(1)"]
 
-class YandexOrderPage:
-    first_name_input = [By.XPATH, ".//input[contains(@placeholder,'Имя')]"]
-    last_name_input = [By.XPATH, ".//input[contains(@placeholder,'Фамилия')]"]
-    address_input = [By.XPATH, ".//input[contains(@placeholder,'Адрес')]"]
-    metro_input = [By.XPATH, ".//input[contains(@placeholder,'метро')]"]
 
-    @staticmethod
-    def METRO_HINT_BUTTON(metro_name: str):
-        return [By.XPATH, f".//div[text()='{metro_name}']/parent::button"]
 
-    telephone_number = [By.XPATH, ".//input[contains(@placeholder,'Телефон')]"]
-    next_button = [By.XPATH, ".//button[text()='Далее']"]
-    back_button = [By.XPATH, ".//button[text()='Назад']"]
-    date_field = [By.XPATH, ".//input[contains(@placeholder,'Когда')]"]
-    rental_period = [By.XPATH, ".//span[@class='Dropdown-arrow']"]
-    rental_period_list = [By.XPATH, ".//div[@class='Dropdown-option']"]
-    color = [By.XPATH, ".//div[contains(text(),'Цвет')]/parent::div//input"]
-    comment_for_courier = [By.XPATH, ".//input[contains(@placeholder,'Комментарий для курьера')]"]
-    order_button = [By.XPATH, ".//button[text()='Назад']/parent::div/button[text()='Заказать']"]
-    accept_button = [By.XPATH, ".//button[text()='Да']"]
-    order_info = [By.XPATH, ".//div[contains(text(),'Номер заказа')]"]
-    status_button = [By.XPATH, ".//button[text()='Посмотреть статус']"]
+class ReceiverFormLocators:
+    #Заголовок "Для кого самокат"
+    receiver_header = [By.XPATH, "//div[@class='Order_Header__BZXOb'][contains(.,'Для кого самокат')]"]
 
+    #Поле "Имя"
+    name_field = [By.XPATH, "//input[@placeholder='* Имя']"]
+
+    #Поле "Фамилия"
+    surname_field = [By.XPATH, "//input[@placeholder='* Фамилия']"]
+
+    #Поле "Адрес"
+    address_field = [By.XPATH, "//input[@placeholder='* Адрес: куда привезти заказ']"]
+
+    #Поле "Станция метро"
+    metro_station_field = [By.XPATH, "//input[@placeholder='* Станция метро']"]
+
+    #Кнопка со станцией метро
+    metro_station_button = [By.XPATH, "//button[contains(.,'Преображенская площадь')]"]
+
+    #Поле "Телефон"
+    phone_field = [By.XPATH, "//input[@placeholder='* Телефон: на него позвонит курьер']"]
+
+    #Кнопка "Далее"
+    continue_button = [By.CSS_SELECTOR, ".Button_Middle__1CSJM"]
+
+    #Кнопка "да все привыкли"
+    cookie_button = [By.CSS_SELECTOR, "#rcc-confirm-button"]
+
+
+class RentDetailsLocators:
+    #Заголовок "Про аренду"
+    rent_header = [By.XPATH, "//div[@class='Order_Header__BZXOb'][contains(.,'Про аренду')]"]
+
+    #Поле "Когда привезти самокат"
+    date_field = [By.XPATH, "//input[@placeholder='* Когда привезти самокат']"]
+
+    #Поле "Срок аренды"
+    rent_time_field = [By.XPATH, "//div[@class='Dropdown-placeholder'][contains(.,'* Срок аренды')]"]
+
+    #Кнопка в раскрывашке
+    rent_picker = [By.XPATH, "(//div[@class='Dropdown-option'])[3]"]
+
+    #Чекбокс с цветом
+    scooter_colour_black = [By.XPATH, "//label[@for='black']"]
+    scooter_colour_grey = [By.XPATH, "//label[@for='grey']"]
+
+    #Кнопка заказать внизу страницы
+    order_button = [By.XPATH, "//button[@class='Button_Button__ra12g Button_Middle__1CSJM'][contains(.,'Заказать')]"]
+
+class OrderConfirmPopupLocators:
+    #Всплывашка с подтверждением
+    #Заголовок
+    order_confirm_header = [By.XPATH, "//div[contains(.,'Хотите оформить заказ?')]"]
+
+    #Кнопка "Да"
+    order_confirm_yes_button = [By.XPATH, "//button[contains(.,'Да')]"]
+
+class OrderCreatedPopupLocators:
+    #Всплывашка с номером
+    #Заголовок
+    order_created_header = [By.XPATH, "//div[contains(.,'Заказ оформлен')]"]
+
+    #Кнопка "Посмотреть статус"
+    go_to_order_button = [By.XPATH, "//button[contains(.,'Посмотреть статус')]"]
+
+class TrackingPageLocators:
+    #Кнопка "Отменить заказ"
+    cancel_button = [By.CSS_SELECTOR, "button.Button_Button__ra12g:nth-child(14)"]
+
+    #Лого "Яндекс"
+    ya_logo = [By.XPATH, "//img[@alt='Yandex']"]
+
+    #Лого "Самокат"
+    scooter_logo = [By.XPATH, "//img[@alt='Scooter']"]
+
+class DzenLocators:
+    yandex_search_logo = [By.CSS_SELECTOR, ".dzen-layout--collapse-button__collapseButton-z1"]

@@ -2,7 +2,7 @@ import pytest
 from selenium import webdriver
 
 
-@pytest.fixture()
+@pytest.fixture
 def driver():
     driver = webdriver.Firefox()
     yield driver

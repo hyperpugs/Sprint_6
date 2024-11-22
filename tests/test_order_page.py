@@ -1,67 +1,59 @@
-import pytest
+
 import allure
-from configs.urls import ORDER_PAGE, ORDER_STATUS_PAGE
-from pages.home_page import HomePage
-from pages.order_page import OrderPage
-from locators import YandexOrderPage
-from configs.test_data import YandexOrderPageData as order_data
+import pytest
+from pages.main_page import MainPage
+from pages.order_form_page import OrderFormPage
 
 
-@allure.epic('Тестирование интерфейса страницы "Оформление заказа"')
-@allure.parent_suite('Создание заказа')
-class TestYandexOrderPage:
-    @allure.suite('Заполнение данных на странице "Для кого самокат"')
-    @allure.feature('Заполнения данных пользователя при создании заказа на этапе ввода данных')
-    @allure.story('Passed проверка заполнения данных')
-    @allure.title('Заполнение данных и переход с этапа "Для кого самокат" на этап "Про аренду"')
-    @allure.description('Проверка, что после ввода валидных данных, '
-                        'нажатии "Далее" происходит переход на следующий этап "Про аренду"')
-    def test_order_page(self, driver):
-        yandex_order_page = OrderPage(driver)
-        yandex_order_page.go_to_site(ORDER_PAGE)
-        yandex_home_page = HomePage(driver)
-        yandex_home_page.click_cookie_accept()
-        yandex_order_page.fill_user_data(order_data.data_sets['data_set1'])
-        yandex_order_page.go_next()
-        assert len(yandex_order_page.find_elements(YandexOrderPage.order_button)) > 0
+class TestSmoke:
+    @allure.title('Проверка оформления заказа с помощью кнопки в шапке сайта и переходы по лого')
+    @allure.description('Проверяем оформления заказа по кнопке "Заказать" в шапке сайта, '
+                        'проверяем переход на главную страницу «Самоката» с помощью логотипа «Самокат», '
+                        'проверяем переход на главную страницу Дзена с помощью логотипа Яндекса')
+    @pytest.mark.parametrize('data', [
+        ["Михаил", "Иванов", "пр. Независимости 116", "Аэропорт", "77007009858", "01.09.2024", "сутки", "black",
+         "После обеда"],
+        ["Татьяна", "Петрова", "ул. Сурганова 2в", "Международная", "72888406506", "10.10.2024", "двое суток", "grey",
+         "Cутра"]])
+    def test_order_button_in_footer_and_logo(self, driver, data):
+        base_page = MainPage(driver)
+        base_page.open_the_page()
 
-    @allure.suite('Заполнение данных на странице "Про аренду"')
-    @allure.feature('Заполнения данных пользователя при создании заказа на этапе ввода данных')
-    @allure.story('Passed проверка заполнения данных')
-    @allure.title('Заполнение данных на этапе "Про аренду" и оформление заказа')
-    @allure.description('Проверка, что после ввода валидных данных, '
-                        'нажатии "Далее" происходит переход на следующий этап "Про аренду"'
-                        'нажатии кнопки "Заказать", открывается окно с подтверждением заказа')
-    @pytest.mark.parametrize('data_set', ['data_set1', 'data_set2'])
-    def test_full_order_page(self, driver, data_set):
-        yandex_order_page = OrderPage(driver)
-        yandex_order_page.go_to_site(ORDER_PAGE)
-        yandex_home_page = HomePage(driver)
-        yandex_home_page.click_cookie_accept()
-        yandex_order_page.fill_user_data(order_data.data_sets[data_set])
-        yandex_order_page.go_next()
-        yandex_order_page.fill_rent_data(order_data.data_sets[data_set])
-        yandex_order_page.click_order()
-        yandex_order_page.click_accept_order()
-        assert len(yandex_order_page.find_elements(YandexOrderPage.order_info)) > 0
+        base_page.click_on_order_button_in_header()
+        base_page.check_is_it_order_page()
 
-    @allure.suite('Создание заказа')
-    @allure.feature('Полный путь создания заказа')
-    @allure.story('Оформление заказа и просмотр страницы заказа')
-    @allure.title('Оформление заказа и переход на страницу с заказм')
-    @allure.description('Проверка что при успешном оформлении заказа, заказ отображается на странице "Статус заказа" ')
-    @pytest.mark.parametrize('data_set', ['data_set1', 'data_set2'])
-    def test_order_page_with_order_status(self, driver, data_set):
-        yandex_order_page = OrderPage(driver)
-        yandex_order_page.go_to_site(ORDER_PAGE)
-        yandex_home_page = HomePage(driver)
-        yandex_home_page.click_cookie_accept()
-        yandex_order_page.fill_user_data(order_data.data_sets[data_set])
-        yandex_order_page.go_next()
-        yandex_order_page.fill_rent_data(order_data.data_sets[data_set])
-        yandex_order_page.click_order()
-        yandex_order_page.click_accept_order()
-        order_number = yandex_order_page.get_order_number()
-        yandex_order_page.click_go_to_status()
-        current_url = yandex_order_page.current_url()
-        assert (ORDER_STATUS_PAGE in current_url) and (order_number in current_url)
+        order_form_page = OrderFormPage(driver)
+        order_form_page.place_order(*data)
+        order_form_page.check_order_is_placed()
+
+        base_page.click_on_logo_scooter()
+        base_page.check_is_it_main_page()
+
+        base_page.click_on_logo_yandex()
+        base_page.check_is_it_dzen_page()
+
+    @allure.title('Проверка оформления заказа с помощью кнопки в центре сайта и переходы по лого')
+    @allure.description('Проверяем оформления заказа по кнопке "Заказать" в центре сайта, '
+                        'проверяем переход на главную страницу «Самоката» с помощью логотипа «Самокат», '
+                        'проверяем переход на главную страницу Дзена с помощью логотипа Яндекса')
+    @pytest.mark.parametrize('data', [
+        ["Александр", "Волков", "ул. Старовиленская 10а", "Римская", "74544862860", "05.09.2024", "шестеро суток",
+         "black", "Вечером"],
+        ["Анна", "Смирнова", "пл. Свободы 2а", "Балтийская", "76146399170", "19.09.2024", "семеро суток", "grey",
+         "К 15:00"]])
+    def test_order_button_in_middle_and_logo(self, driver, data):
+        base_page = MainPage(driver)
+        base_page.open_the_page()
+
+        base_page.click_on_order_button_in_middle()
+        base_page.check_is_it_order_page()
+
+        order_form_page = OrderFormPage(driver)
+        order_form_page.place_order(*data)
+        order_form_page.check_order_is_placed()
+
+        base_page.click_on_logo_scooter()
+        base_page.check_is_it_main_page()
+
+        base_page.click_on_logo_yandex()
+        base_page.check_is_it_dzen_page()
