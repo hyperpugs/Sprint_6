@@ -1,19 +1,37 @@
 import allure
 import pytest
-from data import QuestionData
-from pages.main_page import MainPage
-from locators.main_page_locator import MainPageLocators
+from configs.test_data import YandexHomePageFAQ
+from pages.main_page import HomePage
+from locators import YandexHomePage
 
 
-class TestQuestion:
+@allure.epic('Main page')
+@allure.parent_suite('Домашняя страница')
+@allure.suite('FAQ')
+class TestYandexFAQ:
+    @allure.feature('Вопрос/ответ на Домашней страницы')
+    @allure.story('При нажатии на вопрос в разделе "Вопросы о важном" раскрывается ответ.')
+    @allure.title('При нажатии на вопрос раскрывается ответ ')
+    @allure.description('Проверка что при нажатии на вопрос, '
+                        'данный вопрос открывается и текст в нем соответствует выводу')
+    @pytest.mark.parametrize(
+        "question,answer,expected_answer",
+        [
+            (0, 0, YandexHomePageFAQ.ans_1),
+            (1, 1, YandexHomePageFAQ.ans_2),
+            (2, 2, YandexHomePageFAQ.ans_3),
+            (3, 3, YandexHomePageFAQ.ans_4),
+            (4, 4, YandexHomePageFAQ.ans_5),
+            (5, 5, YandexHomePageFAQ.ans_6),
+            (6, 6, YandexHomePageFAQ.ans_7),
+            (7, 7, YandexHomePageFAQ.ans_8),
+        ]
+    )
+    def test_questions_page_click_show_answer(self, driver, question, answer, expected_answer):
+        yandex_home_page = HomePage(driver)
+        yandex_home_page.go_to_site()
+        yandex_home_page.click_cookie_accept()
+        yandex_home_page.click_question(question_number=question)
+        answer = yandex_home_page.find_element(YandexHomePage.FAQ_answer(answer_number=answer))
 
-    @allure.title('Раздел "Вопросы о важном"')
-    @pytest.mark.parametrize(QuestionData.PARAM, QuestionData.VALUE)
-    def test_question(self, driver, number, expected_answer):
-
-        main_page = MainPage(driver, timer=10)
-        main_page.scroll_to_last_question()
-        main_page.click_to_question(number)
-        answer = main_page.wait_and_find_element(MainPageLocators.get_question_answer(number))
-
-        assert answer.text == expected_answer, 'Ответ на вопрос не совпадает с ожидаемым'
+        assert answer.is_displayed() and answer.text == expected_answer
