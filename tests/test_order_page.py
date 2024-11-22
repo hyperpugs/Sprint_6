@@ -1,7 +1,7 @@
 import pytest
 import allure
 from configs.urls import ORDER_PAGE, ORDER_STATUS_PAGE
-from pages.main_page import HomePage
+from pages.home_page import HomePage
 from pages.order_page import OrderPage
 from locators import YandexOrderPage
 from configs.test_data import YandexOrderPageData as order_data

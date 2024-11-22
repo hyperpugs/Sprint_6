@@ -1,5 +1,5 @@
 import allure
-from pages.main_page import HomePage
+from pages.home_page import HomePage
 from configs.urls import YANDEX_HOME_PAGE, ORDER_PAGE, DZEN_HOME_PAGE, YANDEX_CAPTCHA_PAGE, MAIN_PAGE
 
 

@@ -1,7 +1,8 @@
 import allure
 import pytest
+import conftest
 from configs.test_data import YandexHomePageFAQ
-from pages.main_page import HomePage
+from pages.home_page import HomePage
 from locators import YandexHomePage
 
 
