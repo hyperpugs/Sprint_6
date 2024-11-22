@@ -1,59 +1,31 @@
-
 import allure
 import pytest
-from pages.main_page import MainPage
-from pages.order_form_page import OrderFormPage
+
+from data_for_test import URL_ORDER_PAGE, URL_STATUS_PAGE, ORDER_GOOD, SET_FOR_ORDER
+from locators.home_page_locators import HomePageLocators
+from locators.order_page_locators import OrderPageLocators
+from pages.order_page import OrderPage
 
 
-class TestSmoke:
-    @allure.title('Проверка оформления заказа с помощью кнопки в шапке сайта и переходы по лого')
-    @allure.description('Проверяем оформления заказа по кнопке "Заказать" в шапке сайта, '
-                        'проверяем переход на главную страницу «Самоката» с помощью логотипа «Самокат», '
-                        'проверяем переход на главную страницу Дзена с помощью логотипа Яндекса')
-    @pytest.mark.parametrize('data', [
-        ["Михаил", "Иванов", "пр. Независимости 116", "Аэропорт", "77007009858", "01.09.2024", "сутки", "black",
-         "После обеда"],
-        ["Татьяна", "Петрова", "ул. Сурганова 2в", "Международная", "72888406506", "10.10.2024", "двое суток", "grey",
-         "C утра"]])
-    def test_order_button_in_footer_and_logo(self, driver, data):
-        base_page = MainPage(driver)
-        base_page.open_the_page()
+class TestOrderPage:
 
-        base_page.click_on_order_button_in_header()
-        base_page.check_is_it_order_page()
-
-        order_form_page = OrderFormPage(driver)
-        order_form_page.place_order(*data)
-        order_form_page.check_order_is_placed()
-
-        base_page.click_on_logo_scooter()
-        base_page.check_is_it_main_page()
-
-        base_page.click_on_logo_yandex()
-        base_page.check_is_it_dzen_page()
-
-    @allure.title('Проверка оформления заказа с помощью кнопки в центре сайта и переходы по лого')
-    @allure.description('Проверяем оформления заказа по кнопке "Заказать" в центре сайта, '
-                        'проверяем переход на главную страницу «Самоката» с помощью логотипа «Самокат», '
-                        'проверяем переход на главную страницу Дзена с помощью логотипа Яндекса')
-    @pytest.mark.parametrize('data', [
-        ["Александр", "Волков", "ул. Старовиленская 10а", "Римская", "74544862860", "05.09.2024", "шестеро суток",
-         "black", "Вечером"],
-        ["Анна", "Смирнова", "пл. Свободы 2а", "Балтийская", "76146399170", "19.09.2024", "семеро суток", "grey",
-         "К 15:00"]])
-    def test_order_button_in_middle_and_logo(self, driver, data):
-        base_page = MainPage(driver)
-        base_page.open_the_page()
-
-        base_page.click_on_order_button_in_middle()
-        base_page.check_is_it_order_page()
-
-        order_form_page = OrderFormPage(driver)
-        order_form_page.place_order(*data)
-        order_form_page.check_order_is_placed()
-
-        base_page.click_on_logo_scooter()
-        base_page.check_is_it_main_page()
-
-        base_page.click_on_logo_yandex()
-        base_page.check_is_it_dzen_page()
+    @allure.feature('Страница заказа')
+    @allure.title('Проверка формы заказа')
+    @allure.description('Заказ самоката. Нужно проверить весь флоу позитивного сценария с двумя наборами данных '
+                        'Нажать кнопку «Заказать». Заполнить форму заказа.Проверить, '
+                        'что появилось всплывающее окно с сообщением об успешном создании заказа.,так же проверяется '
+                        'переход к просмотру заказа')
+    @pytest.mark.parametrize('data_set_first, data_set_second', SET_FOR_ORDER)
+    def test_order(self, driver, data_set_first, data_set_second):
+        order_page = OrderPage(driver)
+        order_page.get_url(URL_ORDER_PAGE)
+        order_page.click_on_element(HomePageLocators.BUTTON_COOKIES)
+        order_page.fill_first_page(*data_set_first)
+        order_page.click_on_element1(OrderPageLocators.BUTTON_NEXT)
+        order_page.fill_second_page(*data_set_second)
+        order_page.click_on_element(HomePageLocators.BUTTON_ORDER_SECOND)
+        order_page.click_on_element(OrderPageLocators.BUTTON_YES)
+        order_page.wait_element(OrderPageLocators.TEXT_GOOD_ORDER)
+        assert ORDER_GOOD in order_page.get_text_from_element(OrderPageLocators.TEXT_GOOD_ORDER)
+        order_page.click_on_element(OrderPageLocators.WATCH_STATUS)
+        assert URL_STATUS_PAGE in driver.current_url
