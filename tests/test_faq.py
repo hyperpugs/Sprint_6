@@ -17,14 +17,14 @@ class TestYandexFAQ:
     @pytest.mark.parametrize(
         "question,answer,expected_answer",
         [
-            (0, 0, YandexHomePageFAQ.ans_1),
-            (1, 1, YandexHomePageFAQ.ans_2),
-            (2, 2, YandexHomePageFAQ.ans_3),
-            (3, 3, YandexHomePageFAQ.ans_4),
-            (4, 4, YandexHomePageFAQ.ans_5),
-            (5, 5, YandexHomePageFAQ.ans_6),
-            (6, 6, YandexHomePageFAQ.ans_7),
-            (7, 7, YandexHomePageFAQ.ans_8),
+            (0, 0, YandexHomePageFAQ.ANS_1),
+            (1, 1, YandexHomePageFAQ.ANS_2),
+            (2, 2, YandexHomePageFAQ.ANS_3),
+            (3, 3, YandexHomePageFAQ.ANS_4),
+            (4, 4, YandexHomePageFAQ.ANS_5),
+            (5, 5, YandexHomePageFAQ.ANS_6),
+            (6, 6, YandexHomePageFAQ.ANS_7),
+            (7, 7, YandexHomePageFAQ.ANS_8),
         ]
     )
     def test_questions_page_click_show_answer(self, driver, question, answer, expected_answer):
