@@ -14,7 +14,7 @@ class TestSmoke:
         ["Михаил", "Иванов", "пр. Независимости 116", "Аэропорт", "77007009858", "01.09.2024", "сутки", "black",
          "После обеда"],
         ["Татьяна", "Петрова", "ул. Сурганова 2в", "Международная", "72888406506", "10.10.2024", "двое суток", "grey",
-         "Cутра"]])
+         "C утра"]])
     def test_order_button_in_footer_and_logo(self, driver, data):
         base_page = MainPage(driver)
         base_page.open_the_page()
