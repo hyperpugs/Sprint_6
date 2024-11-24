@@ -167,6 +167,10 @@ class OrderPage(BasePage):
         assert self.driver.current_url == expected_url
 
     @allure.step("Дожидаемся видимости иконки 'лупа' на экране, чтобы убедиться, что мы на странице 'Дзена'")
-    def check_ulr_dzen(self):
-        expected_url = urls.DZEN_URL
-        assert self.driver.current_url == expected_url
+    def wait_for_dzen_logo_visible(self):
+        self.wait_for_element_visible(Locators.yandex_search_logo)
+
+    @allure.step("Дожидаемся видимости иконки 'лупа' на экране, чтобы убедиться, что мы на странице 'Дзена'")
+    def check_icon_dzen(self):
+        expected_icon = self.driver.find_element(Locators.dzen_icon)
+        assert self.driver.find_element(Locators.dzen_icon) == expected_icon
