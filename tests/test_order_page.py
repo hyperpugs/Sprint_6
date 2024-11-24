@@ -1,31 +1,44 @@
-import allure
-import pytest
 
-from data_for_test import URL_ORDER_PAGE, URL_STATUS_PAGE, ORDER_GOOD, SET_FOR_ORDER
-from locators.home_page_locators import HomePageLocators
-from locators.order_page_locators import OrderPageLocators
-from pages.order_page import OrderPage
+import urls
+from selenium.webdriver.firefox import webdriver
+from pages.order_page import *
 
 
-class TestOrderPage:
+class TestOrder:
+    driver = None
 
-    @allure.feature('Страница заказа')
-    @allure.title('Проверка формы заказа')
-    @allure.description('Заказ самоката. Нужно проверить весь флоу позитивного сценария с двумя наборами данных '
-                        'Нажать кнопку «Заказать». Заполнить форму заказа.Проверить, '
-                        'что появилось всплывающее окно с сообщением об успешном создании заказа.,так же проверяется '
-                        'переход к просмотру заказа')
-    @pytest.mark.parametrize('data_set_first, data_set_second', SET_FOR_ORDER)
-    def test_order(self, driver, data_set_first, data_set_second):
-        order_page = OrderPage(driver)
-        order_page.get_url(URL_ORDER_PAGE)
-        order_page.click_on_element(HomePageLocators.BUTTON_COOKIES)
-        order_page.fill_first_page(*data_set_first)
-        order_page.click_on_element1(OrderPageLocators.BUTTON_NEXT)
-        order_page.fill_second_page(*data_set_second)
-        order_page.click_on_element(HomePageLocators.BUTTON_ORDER_SECOND)
-        order_page.click_on_element(OrderPageLocators.BUTTON_YES)
-        order_page.wait_element(OrderPageLocators.TEXT_GOOD_ORDER)
-        assert ORDER_GOOD in order_page.get_text_from_element(OrderPageLocators.TEXT_GOOD_ORDER)
-        order_page.click_on_element(OrderPageLocators.WATCH_STATUS)
-        assert URL_STATUS_PAGE in driver.current_url
+    @allure.title("Проверка создания заказа и перехода на главную по клику на 'Самокат' в логотипе")
+    def test_click_scooter(self, driver):
+        home_page = OrderPage(driver)
+        home_page.navigate(urls.MAIN_URL)
+        home_page.cookie_close()
+        home_page.go_to_order_top()
+        home_page.fill_in_receiver_form()
+        home_page.fill_in_rent_form()
+        home_page.popup_click_yes()
+        home_page.popup_go_to_order()
+        home_page.wait_for_tracking_page()
+        order_created = home_page.wait_for_tracking_page()
+        assert order_created.is_displayed()
+        home_page.scooter_click()
+        home_page.check_url_samokat()
+
+
+    @allure.title("Проверка создания заказа и перехода на 'Дзен' по клику на 'Яндекс' в логотипе")
+    def test_click_yandex(self, driver):
+        home_page = OrderPage(driver)
+        home_page.navigate(urls.MAIN_URL)
+        home_page.cookie_close()
+        home_page.scroll_to_bottom()
+        home_page.wait_for_bottom_button_visible()
+        home_page.go_to_order_bottom()
+        home_page.fill_in_receiver_form()
+        home_page.fill_in_rent_form()
+        home_page.popup_click_yes()
+        home_page.popup_go_to_order()
+        home_page.wait_for_tracking_page()
+        order_created = home_page.wait_for_tracking_page()
+        assert order_created.is_displayed()
+        home_page.yandex_click()
+        home_page.switch_tab()
+        home_page.check_ulr_dzen()
