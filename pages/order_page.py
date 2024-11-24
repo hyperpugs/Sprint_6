@@ -170,7 +170,6 @@ class OrderPage(BasePage):
     def wait_for_dzen_logo_visible(self):
         self.wait_for_element_visible(Locators.yandex_search_logo)
 
-    @allure.step("Дожидаемся видимости иконки 'лупа' на экране, чтобы убедиться, что мы на странице 'Дзена'")
+    @allure.step("Дожидаемся видимости текста")
     def check_icon_dzen(self):
-        expected_icon = self.driver.find_element(Locators.dzen_icon)
-        assert self.driver.find_element(Locators.dzen_icon) == expected_icon
+        assert self.driver.find_element(Locators.dzen_icon) == Locators.dzen_icon

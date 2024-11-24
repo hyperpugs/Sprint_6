@@ -106,4 +106,4 @@ class Locators:
 
     yandex_search_logo = [By.CSS_SELECTOR, ".dzen-layout--collapse-button__collapseButton-z1"]
 
-    dzen_icon = [By.XPATH, "//div[1]/svg[contains(., 'Ещё 5 новостей')]"]
+    dzen_icon = [By.CSS_SELECTOR, ".dzen-desktop--trends-entry-desktop__title-3S"]
