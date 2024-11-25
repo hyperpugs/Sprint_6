@@ -1,9 +1,12 @@
+from asyncio import timeout
+
 from selenium.webdriver import Keys
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 from pages.base_page import *
 import urls
+from locators import *
 
 #элементы страницы
 class OrderPage(BasePage):
@@ -166,10 +169,12 @@ class OrderPage(BasePage):
         expected_url = urls.MAIN_URL
         assert self.driver.current_url == expected_url
 
-    @allure.step("Дожидаемся видимости иконки 'лупа' на экране, чтобы убедиться, что мы на странице 'Дзена'")
     def wait_for_dzen_logo_visible(self):
-        self.wait_for_element_visible(Locators.yandex_search_logo)
+        self.wait_for_element_visible(Locators.search_button)
 
-    @allure.step("Дожидаемся видимости текста")
-    def check_icon_dzen(self):
-        assert self.driver.find_element(Locators.dzen_icon) == Locators.dzen_icon
+
+    @allure.step("Проверяем url чтобы убедиться, что мы на странице 'Дзена'")
+    def check_dzen(self):
+        expected_url = urls.DZEN_URL
+        actual_url = self.driver.current_url
+        assert actual_url == expected_url, f"Expected URL to be {expected_url}, but got {actual_url}"

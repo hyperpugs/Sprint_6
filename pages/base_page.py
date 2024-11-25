@@ -47,8 +47,3 @@ class BasePage:
             close_button.click()
         except NoSuchElementException:
             pass
-
-    @allure.step("Дожидаемся видимости иконки 'лупа' на экране, чтобы убедиться, что мы на странице 'Дзена'")
-    def wait_for_dzen_logo_visible(self):
-        self.wait_for_element_visible(Locators.yandex_search_logo)
-

@@ -1,7 +1,10 @@
 
 import urls
 from selenium.webdriver.firefox import webdriver
+
+from pages.dzen_page import DzenPage
 from pages.order_page import *
+from pages.base_page import *
 
 
 class TestOrder:
@@ -38,4 +41,6 @@ class TestOrder:
         home_page.popup_go_to_order()
         home_page.yandex_click()
         home_page.switch_tab()
-        home_page.check_icon_dzen()
+        dzen = DzenPage(driver)
+        dzen.wait_for_dzen_logo_visible()
+        assert dzen.driver.current_url == urls.DZEN_URL, 'Не удалось перейти на страницу Дзена'

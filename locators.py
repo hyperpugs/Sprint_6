@@ -107,3 +107,10 @@ class Locators:
     yandex_search_logo = [By.CSS_SELECTOR, ".dzen-layout--collapse-button__collapseButton-z1"]
 
     dzen_icon = [By.CSS_SELECTOR, ".dzen-desktop--trends-entry-desktop__title-3S"]
+
+    search_button = [By.XPATH, "//button[@class='arrow__button'][contains(.,'Найти')]"]
+
+    search = [By.CSS_SELECTOR, ".arrow__button" ]
+
+
+
