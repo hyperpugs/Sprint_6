@@ -1,180 +1,117 @@
-from asyncio import timeout
-
-from selenium.webdriver import Keys
-from selenium.webdriver.firefox.webdriver import WebDriver
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from webdriver_manager.firefox import GeckoDriverManager
-from pages.base_page import *
-import urls
-from locators import *
-
-#элементы страницы
-class OrderPage(BasePage):
-    #Форма "Для кого самокат"
-    @allure.step("Инициализируем браузер")
-    def __init__(self, driver: WebDriver):
+import allure
+from selenium.webdriver.common.by import By
+from pages.base_page import BasePage
+class OrderFormPage(BasePage):
+    URL = 'https://qa-scooter.praktikum-services.ru/order'
+    ORDER_HEADER_FOR_WHO = (By.XPATH, ".//div[contains(text(),'Для кого')]")
+    ORDER_HEADER_RENTAL = (By.XPATH, ".//div[contains(text(),'Про аренду')]")
+    FIELD_FIRST_NAME = (By.XPATH, ".//input[contains(@placeholder, 'Имя')]")
+    FIELD_LAST_NAME = (By.XPATH, ".//input[contains(@placeholder, 'Фамилия')]")
+    FIELD_ADDRESS = (By.XPATH, ".//input[contains(@placeholder, 'Адрес')]")
+    FIELD_SUBWAY_STATION = (By.XPATH, ".//input[contains(@placeholder, 'метро')]")
+    STATION_LOCATOR = (By.XPATH, ".//div[contains(text(), '{0}')]")
+    FIELD_PHONE_NUMBER = (By.XPATH, ".//input[contains(@placeholder, 'Телефон')]")
+    BUTTON_NEXT = (By.XPATH, ".//button[contains(text(), 'Далее')]")
+    FIELD_DELIVERY_DATE = (By.XPATH, ".//input[contains(@placeholder, 'Когда привезти')]")
+    FIELD_RENTAL_TIME = (By.XPATH, ".//div[contains(@class, 'Dropdown-placeholder')]")
+    FIELD_COMMENTS = (By.XPATH, ".//input[contains(@placeholder, 'Комментарий')]")
+    BUTTON_ORDER = (By.XPATH, ".//button[contains(@class, 'Middle') and contains(text(), 'Заказать')]")
+    CONFIRM_HEADER = (By.XPATH, ".//div[contains(@class, 'ModalHeader')]")
+    BUTTON_ACCEPT_ORDER = (By.XPATH, ".//button[contains(text(),'Да')]")
+    CONFIRMED_HEADER = (By.XPATH, ".//div[contains(text(),'оформлен')]")
+    BUTTON_STATUS_ORDER = (By.XPATH, './/button[contains(text(),"статус")]')
+    STATUS_ORDER = (By.XPATH, ".//div[contains(@class,'Content')]")
+    CHECK_BOX = (By.ID, '{0}')
+    def __init__(self, driver):
+        super().__init__(driver)
         self.driver = driver
-
-    @allure.step("Нажимаем на 'Заказать' на главной вверху страницы")
-    def go_to_order_top(self):
-        self.click_element(Locators.top_order_button)
-
-    @allure.step("Прокручиваем до кнопки 'Заказать' внизу страницы")
-    def scroll_to_bottom(self):
-        element = self.find_element(Locators.bottom_order_button)
-        self.driver.execute_script("arguments[0].scrollIntoView();", element)
-
-    @allure.step("Нажимаем на 'Заказать' на главной вверху страницы")
-    def go_to_order_bottom(self):
-        self.click_element(Locators.bottom_order_button)
-
-    @allure.step("Дожидаемся видимости кнопки 'Заказать' внизу страницы")
-    def wait_for_bottom_button_visible(self):
-        self.wait_for_element_visible(Locators.bottom_order_button)
-
-    @allure.step("Прокручиваем до блока с вопросами и ответами")
-    def scroll_to_accordeon(self):
-        element = self.find_element(Locators.faq_1)
-        self.driver.execute_script("arguments[0].scrollIntoView();", element)
-
-    @allure.step("Убеждаемся, что доскроллили до блока с вопросами и ответами")
-    def wait_for_accordeon_in_view(self):
-        self.wait_for_element_visible(Locators.faq_1)
-
-    @allure.step("Ждём появления всплывающего окна 'Хотите оформить заказ?'")
-    def wait_for_popup1(self):
-        self.wait_for_element_visible(Locators.order_confirm_header)
-
-    @allure.step("Нажимаем 'Да' во всплывающем окне")
-    def click_yes(self):
-        self.click_element(Locators.order_confirm_yes_button)
-
-    def popup_click_yes(self):
-        self.wait_for_popup1()
-        self.click_yes()
-
-    @allure.step("Ждём появления всплывающего окна с номером заказа")
-    def wait_for_popup2(self):
-        self.wait_for_element_visible(Locators.order_created_header)
-
-    @allure.step("Кликаем на 'Посмотреть статус' для перехода к странице статуса заказа")
-    def click_to_see_order_page(self):
-        self.click_element(Locators.go_to_order_button)
-
-    def popup_go_to_order(self):
-        self.wait_for_popup2()
-        self.click_to_see_order_page()
-
-    @allure.step("Ждём, пока нужный заголовок станет видимым")
-    def wait_until_receiver_form_visible(self):
-        self.wait_for_element_visible(Locators.receiver_header)
-
-    @allure.step("Заполняем поле 'Имя'")
-    def fill_in_name(self):
-        self.enter_text(Locators.name_field, "Юнги")
-
-    @allure.step("Заполняем поле 'Фамилия'")
-    def fill_in_surname(self):
-        self.enter_text(Locators.surname_field, "Мин")
-
-    @allure.step("Заполняем поле 'Адрес'")
-    def fill_in_address(self):
-        self.enter_text(Locators.address_field, "Бойцовая улица, 24с1")
-
-    @allure.step("Выбираем станцию метро")
-    def click_metro_station(self):
-        self.click_element(Locators.metro_station_field)
-        self.click_element(Locators.metro_station_button)
-
-    @allure.step("Вводим номер телефона")
-    def fill_in_phone_number(self):
-        self.enter_text(Locators.phone_field, "+79999999999")
-
-    @allure.step("Кликаем на 'Далее'")
-    def click_continue(self):
-        self.click_element(Locators.continue_button)
-
-    @allure.step("Заполняем форму 'Для кого самокат'")
-    def fill_in_receiver_form(self):
-        self.wait_until_receiver_form_visible()
-        self.fill_in_name()
-        self.fill_in_surname()
-        self.fill_in_address()
-        self.click_metro_station()
-        self.fill_in_phone_number()
-        self.click_continue()
-
-
-    @allure.step("Ждём, пока нужный заголовок станет видимым")
-    def wait_until_rent_form_visible(self):
-        self.wait_for_element_visible(Locators.rent_header)
-
-    @allure.step("Заполняем дату")
-    def fill_in_date(self):
-        self.enter_text(Locators.date_field, "31.12.2024")
-
-    @allure.step("Прожимаем Enter после ввода даты")
-    def press_enter_date(self):
-        self.enter_text(Locators.date_field, Keys.ENTER)
-
-    @allure.step("Выбираем длительность аренды")
-    def pick_duration(self):
-        self.click_element(Locators.rent_time_field)
-        self.wait_for_element_visible(Locators.rent_picker)
-        self.click_element(Locators.rent_picker)
-
-    @allure.step("Выбираем чёрный цвет самоката")
-    def pick_colour_black(self):
-        self.click_element(Locators.scooter_colour_black)
-
-    @allure.step("Выбираем серый цвет самоката")
-    def pick_colour_grey(self):
-        self.click_element(Locators.scooter_colour_grey)
-
-    @allure.step("Нажимаем 'Заказать'")
-    def click_order_at_rent_details(self):
-        self.click_element(Locators.order_button)
-
-
-    @allure.step("Заполняем форму 'Про аренду'")
-    def fill_in_rent_form(self):
-        self.wait_until_rent_form_visible()
-        self.fill_in_date()
-        self.press_enter_date()
-        self.pick_duration()
-        self.pick_colour_black()
-        self.click_order_at_rent_details()
-
-
-    @allure.step("Проверяем, что мы на странице с трекингом заказа")
-    def wait_for_tracking_page(self):
-        return self.wait_for_element_visible(Locators.cancel_button)
-
-    @allure.step("Кликаем по слову 'Яндекс' в логотипе")
-    def yandex_click(self):
-        self.click_element(Locators.ya_logo)
-
-    @allure.step("Кликаем по слову 'Самокат' в логотипе")
-    def scooter_click(self):
-        self.click_element(Locators.scooter_logo)
-
-
-    @allure.step("Проверяем, что мы на странице с трекингом заказа")
-    def wait_for_tracking_page(self):
-        return self.wait_for_element_visible(Locators.cancel_button)
-
-
-    @allure.step("Проверка url")
-    def check_url_samokat(self):
-        expected_url = urls.MAIN_URL
-        assert self.driver.current_url == expected_url
-
-    def wait_for_dzen_logo_visible(self):
-        self.wait_for_element_visible(Locators.search_button)
-
-
-    @allure.step("Проверяем url чтобы убедиться, что мы на странице 'Дзена'")
-    def check_dzen(self):
-        expected_url = urls.DZEN_URL
-        actual_url = self.driver.current_url
-        assert actual_url == expected_url, f"Expected URL to be {expected_url}, but got {actual_url}"
+    @allure.step('Заполнить поле "Имя" ')
+    def set_first_name(self, first_name):
+        self._set_value_to_field(self.FIELD_FIRST_NAME, first_name)
+    @allure.step('Заполнить поле "Фамилия" ')
+    def set_last_name(self, last_name):
+        self._set_value_to_field(self.FIELD_LAST_NAME, last_name)
+    @allure.step('Заполнить поле "Адрес" ')
+    def set_address(self, address):
+        self._set_value_to_field(self.FIELD_ADDRESS, address)
+    @allure.step('Заполнить поле "Станция метро" ')
+    def set_subway_station(self, station_name):
+        self._wait_and_click_on_element(self.FIELD_SUBWAY_STATION)
+        station = self._modify_locator(self.STATION_LOCATOR, station_name)
+        self._go_to_element(station)
+        self._wait_and_click_on_element(station)
+        assert station_name in self._wait_and_find_element(self.FIELD_SUBWAY_STATION).get_attribute('value'), \
+            "Отображается неверная станция"
+    @allure.step('Заполнить поле "Телефон" ')
+    def set_phone_number(self, phone_number):
+        self._set_value_to_field(self.FIELD_PHONE_NUMBER, phone_number)
+    @allure.step('Нажать на кнопку "Далее" ')
+    def click_on_button_next(self):
+        self._wait_and_click_on_element(self.BUTTON_NEXT)
+    @allure.step('Проверка перехода в раздел "Про аренду" при оформлении заказа')
+    def check_is_it_section_about_rental(self):
+        assert self._wait_and_find_element(self.ORDER_HEADER_RENTAL).is_displayed(), \
+            "Оформление не перешло на раздел 'Про аренду' "
+    @allure.step('Заполнить раздел "Для кого самокат" ')
+    def set_section_for_who(self, first_name, last_name, address, subway_station, phone_number):
+        self.set_first_name(first_name)
+        self.set_last_name(last_name)
+        self.set_address(address)
+        self.set_subway_station(subway_station)
+        self.set_phone_number(phone_number)
+        self.click_on_button_next()
+        self.check_is_it_section_about_rental()
+    @allure.step('Заполнить поле "Когда привезти самокат" ')
+    def set_delivery_date(self, date):
+        self._set_value_to_field(self.FIELD_DELIVERY_DATE, date)
+        self._press_enter_in_field(self.FIELD_DELIVERY_DATE)
+    @allure.step('Заполнить поле "Срок аренды" ')
+    def set_rental_time(self, rental_time):
+        self._wait_and_click_on_element(self.FIELD_RENTAL_TIME)
+        rental_time_locator = (By.XPATH, f".//div[contains(@class, 'Dropdown') and contains(text(), '{rental_time}')]")
+        self._go_to_element(rental_time_locator)
+        self._wait_and_click_on_element(rental_time_locator)
+        assert rental_time in self._wait_and_find_element(self.FIELD_RENTAL_TIME).text
+    @allure.step('Выбрать чекбокс "Цвет самоката" ')
+    def set_color(self, color):
+        check_box = self._modify_locator(self.CHECK_BOX, color)
+        self._wait_and_click_on_element(check_box)
+        assert self._wait_and_find_element(check_box).is_selected(), "Чекбокс не выбирается"
+    @allure.step('Заполнить комментарий')
+    def set_comments(self, comments):
+        self._set_value_to_field(self.FIELD_COMMENTS, comments)
+    @allure.step('Нажать на кнопку "Заказать" ')
+    def click_on_button_order(self):
+        self._wait_and_click_on_element(self.BUTTON_ORDER)
+    @allure.step('Проверка перехода в окно подтверждения заказа')
+    def check_is_it_confirm_alert(self):
+        assert self._wait_and_find_element(self.CONFIRM_HEADER).is_displayed(), 'Окно подтверждения заказа не появилось'
+    @allure.step('Нажать на кнопку "Да" ')
+    def click_on_button_accept_order(self):
+        self._wait_and_click_on_element(self.BUTTON_ACCEPT_ORDER)
+    @allure.step('Проверка перехода в окно подтверждения заказа')
+    def check_is_it_confirmed_alert(self):
+        assert self._wait_and_find_element(self.CONFIRMED_HEADER).is_displayed(), \
+            'Окно подтвержденного заказа не появилось'
+    @allure.step('Заполнить раздел "Про аренду" ')
+    def set_section_about_rental(self, date, rental_time, color, comments):
+        self.set_delivery_date(date)
+        self.set_rental_time(rental_time)
+        self.set_color(color)
+        self.set_comments(comments)
+        self.click_on_button_order()
+        self.check_is_it_confirm_alert()
+        self.click_on_button_accept_order()
+        self.check_is_it_confirmed_alert()
+    @allure.step('Оформить заказ ')
+    def place_order(self, first_name, last_name, address, subway_station, phone_number, date, rental_time, color,
+                    comments):
+        self.set_section_for_who(first_name, last_name, address, subway_station, phone_number)
+        self.set_section_about_rental(date, rental_time, color, comments)
+    @allure.step('Нажать на кнопку "Посмотреть статус" ')
+    def click_on_button_status_order(self):
+        self._wait_and_click_on_element(self.BUTTON_STATUS_ORDER)
+    @allure.step('Проверка оформился ли заказ ')
+    def check_order_is_placed(self):
+        self.click_on_button_status_order()
+        assert self._wait_and_find_element(self.STATUS_ORDER).is_displayed(), "Заказ оформлен "
