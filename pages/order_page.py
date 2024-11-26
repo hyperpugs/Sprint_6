@@ -50,7 +50,7 @@ class OrderFormPage(BasePage):
 
     @allure.step('Заполнить поле "Срок аренды" ')
     def set_rental_time(self, rental_time):
-        rental_time = 'четверо'
+        rental_time = ''
         self._wait_and_click_on_element(LocatorsOrder.FIELD_RENTAL_TIME)
         rental_time_locator = LocatorsOrder.rental_time_locator
         self._go_to_element(rental_time_locator)

@@ -35,4 +35,4 @@ class LocatorsOrder:
     BUTTON_STATUS_ORDER = (By.XPATH, './/button[contains(text(),"статус")]')
     STATUS_ORDER = (By.XPATH, ".//div[contains(@class,'Content')]")
     CHECK_BOX = (By.ID, '{0}')
-    rental_time_locator = (By.XPATH, f".//div[contains(@class, 'Dropdown') and contains(text(), 'четверо')]")
+    rental_time_locator = (By.XPATH, f".//div[contains(@class, 'Dropdown') and contains(text(), 'суток')]")
