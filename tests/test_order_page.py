@@ -24,6 +24,7 @@ class TestSmoke:
         base_page.check_is_it_main_page()
         base_page.click_on_logo_yandex()
         base_page.check_is_it_dzen_page()
+
     @allure.title('Проверка оформления заказа с помощью кнопки в центре сайта и переходы по лого')
     @allure.description('Проверяем оформления заказа по кнопке "Заказать" в центре сайта, '
                         'проверяем переход на главную страницу «Самоката» с помощью логотипа «Самокат», '
